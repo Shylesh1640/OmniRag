@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.services.file_service import get_files, get_file
+from app.utils.storage import get_files, get_file
 from app.models.file import File
 from typing import List
 

@@ -1,5 +1,21 @@
 fastapi==0.104.1
 uvicorn==0.27.0
 pydantic==2.5.0
+pydantic-settings==2.1.0
 langgraph==0.0.35
 python-multipart==0.0.6
+# Text/PDF extraction
+PyPDF2==3.0.1
+# Image OCR
+pillow==10.1.0
+pytesseract==0.3.10
+# Audio transcription
+faster-whisper==0.9.0
+# Video processing
+opencv-python==4.8.1.78
+# Embeddings
+sentence-transformers==2.2.2
+# Vector database
+chromadb==0.4.22
+# Utils
+numpy==1.26.2

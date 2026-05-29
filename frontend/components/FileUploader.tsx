@@ -1,21 +1,45 @@
 import { useState } from 'react';
 
+interface IngestionResult {
+  file_id: string;
+  filename: string;
+  chunks_count: number;
+  status: string;
+  error?: string | null;
+}
+
+const statusLabel: Record<string, string> = {
+  success: 'Ingested successfully',
+  partial: 'Partially ingested',
+  failed: 'Ingestion failed',
+};
+
+const statusColor: Record<string, string> = {
+  success: 'text-green-600',
+  partial: 'text-yellow-600',
+  failed: 'text-red-600',
+};
+
 const FileUploader = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [uploadStatus, setUploadStatus] = useState<string>('');
+  const [uploading, setUploading] = useState(false);
+  const [result, setResult] = useState<IngestionResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
+      setResult(null);
+      setError(null);
     }
   };
 
   const handleUpload = async () => {
     if (!selectedFile) return;
 
-    setUploadStatus('Uploading...');
-    setUploadProgress(0);
+    setUploading(true);
+    setResult(null);
+    setError(null);
 
     const formData = new FormData();
     formData.append('file', selectedFile);
@@ -27,15 +51,16 @@ const FileUploader = () => {
       });
 
       if (response.ok) {
-        const result = await response.json();
-        setUploadStatus(`Upload successful! File ID: ${result.id}`);
-        setUploadProgress(100);
+        const data: IngestionResult = await response.json();
+        setResult(data);
       } else {
-        throw new Error('Upload failed');
+        const text = await response.text();
+        throw new Error(text || 'Upload failed');
       }
-    } catch (error) {
-      setUploadStatus('Upload failed. Please try again.');
-      setUploadProgress(0);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Upload failed');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -45,28 +70,30 @@ const FileUploader = () => {
         type="file"
         onChange={handleFileChange}
         className="w-full border border-gray-300 rounded p-2"
+        disabled={uploading}
       />
       {selectedFile && (
         <div>
-          <p>Selected file: {selectedFile.name}</p>
+          <p className="text-sm text-gray-600">Selected: {selectedFile.name}</p>
           <button
             onClick={handleUpload}
-            disabled={uploadProgress === 100}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            disabled={uploading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 mt-2"
           >
-            {uploadProgress === 100 ? 'Uploaded' : 'Upload File'}
+            {uploading ? 'Processing...' : 'Upload & Ingest'}
           </button>
         </div>
       )}
-      <div className="mt-2">
-        <div className="w-full bg-gray-200 rounded-full h-2.5">
-          <div
-            className="bg-blue-600 h-2.5 rounded-full"
-            style={{ width: uploadProgress + '%' }}
-          ></div>
+      {result && (
+        <div className="p-3 border border-gray-200 rounded space-y-1 text-sm">
+          <p className={statusColor[result.status] || 'text-gray-600'}>
+            {statusLabel[result.status] || result.status}
+          </p>
+          <p>Chunks created: {result.chunks_count}</p>
+          {result.error && <p className="text-red-500">Error: {result.error}</p>}
         </div>
-        <p className="mt-1 text-center">{uploadStatus}</p>
-      </div>
+      )}
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };
