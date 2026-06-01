@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "nex http://localhost:3000t start",
     "lint": "next lint"
   },
   "dependencies": {

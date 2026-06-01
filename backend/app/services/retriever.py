@@ -2,6 +2,7 @@ from typing import List, Dict, Any
 
 from app.services.embeddings import embed_query
 from app.services.vectorstore import get_vector_store
+from app.core.config import settings
 
 
 def retrieve_context(
@@ -9,7 +10,7 @@ def retrieve_context(
     top_k: int = 5,
     min_score: float = 0.3
 ) -> Dict[str, Any]:
-    store = get_vector_store()
+    store = get_vector_store(settings.CHROMA_PERSIST_DIR)
     if not store.is_available:
         return {
             'chunks': [], 'query': query,
@@ -23,7 +24,7 @@ def retrieve_context(
             'needs_fallback': True,
             'reason': 'No documents in vector store'
         }
-    query_emb = embed_query(query)
+    query_emb = embed_query(query, settings.EMBEDDING_MODEL)
     if query_emb is None:
         return {
             'chunks': [], 'query': query,

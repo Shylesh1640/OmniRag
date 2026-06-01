@@ -1,21 +1,35 @@
-fastapi==0.104.1
-uvicorn==0.27.0
-pydantic==2.5.0
-pydantic-settings==2.1.0
-langgraph==0.0.35
-python-multipart==0.0.6
+fastapi>=0.100.0
+uvicorn>=0.20.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+langgraph>=0.0.35
+langchain>=0.1.0
+langchain-core>=0.1.0
+python-multipart>=0.0.6
+
 # Text/PDF extraction
-PyPDF2==3.0.1
+PyPDF2>=3.0.1
+python-docx>=0.8.11
+openpyxl>=3.1.2
+
 # Image OCR
-pillow==10.1.0
-pytesseract==0.3.10
+pillow>=11.0.0
+pytesseract>=0.3.10
+
 # Audio transcription
-faster-whisper==0.9.0
+faster-whisper>=0.9.0
+
 # Video processing
-opencv-python==4.8.1.78
-# Embeddings
-sentence-transformers==2.2.2
+opencv-python>=4.10.0
+
+# Embeddings & LLM
+sentence-transformers>=2.6.0
+torch>=2.4.0
+transformers>=4.41.0
+
 # Vector database
-chromadb==0.4.22
+chromadb>=0.4.22
+
 # Utils
-numpy==1.26.2
+numpy>=1.26.2
+requests>=2.31.0
